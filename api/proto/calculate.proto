@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package calculate;
+
+option go_package = "github.com/ubah-lpnu/calculator-gRPC/pkg/api";
+service Calculate {
+    rpc PerformCalculation(CalculateRequest) returns (CalculateResponse);
+}
+
+message CalculateRequest {
+    float a = 1;
+    float b = 2;
+}
+
+message CalculateResponse {
+    float result_mul = 1;
+    float result_div = 2;
+}

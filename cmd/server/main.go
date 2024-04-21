@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	port = ":50051"
+	Port = ":50051"
 )
 
 func main() {
@@ -18,7 +18,7 @@ func main() {
 	srv := &server.CalculateServer{}
 	pb.RegisterCalculateServer(s, srv)
 
-	lis, err := net.Listen("tcp", port)
+	lis, err := net.Listen("tcp", Port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}

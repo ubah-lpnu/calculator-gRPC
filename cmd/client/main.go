@@ -1,36 +1,42 @@
 package main
 
 import (
+	"context"
 	"flag"
-	"fmt"
-	// "strings"
-	// calc "github.com/ubah-lpnu/calculator-gRPC/internal/calculate"
-	// pb "github.com/ubah-lpnu/calculator-gRPC/pkg/api/proto"
+	"log"
+	"time"
+
+	pb "github.com/ubah-lpnu/calculator-gRPC/pkg/api/proto"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
-// func validateInputs([]inputNumbers string) (float32, float32, error) {
-// 	numbers := strings.Split(inputNumbers, "")
-// 	if len(numbers) != 2 {
-// 		return 0, 0, errors.New("invalid input")
-// 	}
-
-// 	a, err := strconv.ParseFloat(numbers[0], 32)
-// 	if err != nil {
-// 		return 0, 0, err
-// 	}
-// 	b, err := strconv.ParseFloat(numbers[1], 32)
-// 	if err != nil {
-// 		return 0, 0, err
-// 	}
-
-// 	return float32(a), float32(b), nil
-// }
-
 func main() {
+	a := flag.Float64("a", 0.0, "first decimal number")
+	b := flag.Float64("b", 0.0, "second decimal number")
 
-	a := flag.String("a", "1.0", "A number")
-	b := flag.String("b", "1.0", "B number")
 	flag.Parse()
-	fmt.Println(*a, *b)
-	fmt.Println(flag.Args())
+
+	if *a == 0.0 || *b == 0.0 {
+		log.Fatal("provide both numbers")
+	}
+
+	connection, err := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("did not connect: %v", err)
+	}
+	defer connection.Close()
+	client := pb.NewCalculateClient(connection)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	res, err := client.PerformCalculation(ctx, &pb.CalculateRequest{A: *a, B: *b})
+	if err != nil {
+		log.Fatalf("could not perform calculation: %v", err)
+	}
+
+	log.Printf("Result of multiplication: %f", res.ResultMul)
+	log.Printf("Result of division: %f", res.ResultDiv)
+
 }

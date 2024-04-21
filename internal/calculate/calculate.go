@@ -8,22 +8,23 @@ import (
 
 func MultiplyAndDivide(a, b float32) (*pb.CalculateResponse, error) {
 	result := &pb.CalculateResponse{}
-	resultChan := make(chan float32)
+	resultMulChan := make(chan float32)
+	resultDivChan := make(chan float32)
 
 	if b == 0 {
 		return nil, errors.New("Division by 0")
 	}
 
 	go func() {
-		resultChan <- a * b
+		resultMulChan <- a * b
 	}()
 
 	go func() {
-		resultChan <- a / b
+		resultDivChan <- a / b
 	}()
 
-	result.ResultMul = <-resultChan
-	result.ResultDiv = <-resultChan
+	result.ResultMul = <-resultMulChan
+	result.ResultDiv = <-resultDivChan
 
 	return result, nil
 

@@ -2,7 +2,9 @@ package server
 
 import (
 	"context"
+	"log"
 
+	calc "github.com/ubah-lpnu/calculator-gRPC/internal/calculate"
 	pb "github.com/ubah-lpnu/calculator-gRPC/pkg/api/proto"
 )
 
@@ -11,23 +13,20 @@ type CalculateServer struct {
 }
 
 func (s *CalculateServer) PerformCalculation(ctx context.Context, req *pb.CalculateRequest) (*pb.CalculateResponse, error) {
-	mulResultChan := make(chan float32)
-	divisionResult := make(chan float32)
+	log.Printf("Performing calculation for A=%f, B=%f", req.A, req.B)
 
-	go func() {
-		multiplication := req.A * req.B
-		divisionResult <- multiplication
-	}()
+	result, err := calc.MultiplyAndDivide(req.A, req.B)
+	if err != nil {
+		log.Printf("Calculation failed: %v", err)
+		return nil, err
+	}
 
-	go func() {
-		division := req.A / req.B
-		divisionResult <- division
-	}()
+	log.Printf("Calculation successful: ResultMul=%f, ResultDiv=%f", result.ResultMul, result.ResultDiv)
 
-	product := <-mulResultChan
-	quotient := <-divisionResult
-
-	return &pb.CalculateResponse{ResultMul: product, ResultDiv: quotient}, nil
+	return &pb.CalculateResponse{
+		ResultMul: result.ResultMul,
+		ResultDiv: result.ResultDiv,
+	}, nil
 }
 
 func (s *CalculateServer) mustEmbedUnimplementedCalculateServer() {

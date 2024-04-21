@@ -1,9 +1,10 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"net"
 
+	log "github.com/ubah-lpnu/calculator-gRPC/internal/logger"
 	"github.com/ubah-lpnu/calculator-gRPC/internal/server"
 	pb "github.com/ubah-lpnu/calculator-gRPC/pkg/api/proto"
 	"google.golang.org/grpc"
@@ -14,17 +15,18 @@ const (
 )
 
 func main() {
+	log := log.GetLogger()
 	s := grpc.NewServer()
 	srv := &server.CalculateServer{}
 	pb.RegisterCalculateServer(s, srv)
 
 	lis, err := net.Listen("tcp", Port)
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		log.Fatal(fmt.Sprintf("failed to listen: %v", err))
 	}
 
 	if err := s.Serve(lis); err != nil {
-		log.Fatal(err)
+		log.Fatal(err.Error())
 	}
 
 }

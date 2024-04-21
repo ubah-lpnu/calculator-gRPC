@@ -8,11 +8,11 @@ service Calculate {
 }
 
 message CalculateRequest {
-    float a = 1;
-    float b = 2;
+    double a = 1;
+    double b = 2;
 }
 
 message CalculateResponse {
-    float result_mul = 1;
-    float result_div = 2;
+    double result_mul = 1;
+    double result_div = 2;
 }

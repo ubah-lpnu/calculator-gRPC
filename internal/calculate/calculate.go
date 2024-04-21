@@ -6,10 +6,10 @@ import (
 	pb "github.com/ubah-lpnu/calculator-gRPC/pkg/api/proto"
 )
 
-func MultiplyAndDivide(a, b float32) (*pb.CalculateResponse, error) {
+func MultiplyAndDivide(a, b float64) (*pb.CalculateResponse, error) {
 	result := &pb.CalculateResponse{}
-	resultMulChan := make(chan float32)
-	resultDivChan := make(chan float32)
+	resultMulChan := make(chan float64)
+	resultDivChan := make(chan float64)
 
 	if b == 0 {
 		return nil, errors.New("Division by 0")

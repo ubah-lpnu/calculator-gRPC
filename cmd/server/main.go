@@ -7,6 +7,7 @@ import (
 	log "github.com/ubah-lpnu/calculator-gRPC/internal/logger"
 	"github.com/ubah-lpnu/calculator-gRPC/internal/server"
 	pb "github.com/ubah-lpnu/calculator-gRPC/pkg/api/proto"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
 
@@ -16,6 +17,7 @@ const (
 
 func main() {
 	log := log.GetLogger()
+	log.Info("Server started on port", zap.String("port", Port))
 	s := grpc.NewServer()
 	srv := &server.CalculateServer{}
 	pb.RegisterCalculateServer(s, srv)
